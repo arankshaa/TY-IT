@@ -1,0 +1,94 @@
+import java.util.Scanner;
+
+public class HillCipher {
+
+    private static final int MATRIX_SIZE = 2; // Define the size of the matrix (2x2 for this example)
+    private static int[][] keyMatrix;
+
+    // Function to validate whether the key matrix is invertible (determinant != 0)
+    private static boolean isKeyMatrixInvertible() {
+        int determinant = keyMatrix[0][0] * keyMatrix[1][1] - keyMatrix[0][1] * keyMatrix[1][0];
+        return determinant != 0;
+    }
+
+    // Function to calculate the modulo of a number to ensure it falls within the range of the alphabet
+    private static int modulo(int a, int m) {
+        return (a % m + m) % m;
+    }
+
+    // Function to encrypt the plaintext using the Hill Cipher
+    private static String encrypt(String plaintext) {
+        StringBuilder encryptedText = new StringBuilder();
+
+        // Pad the plaintext if its length is not a multiple of MATRIX_SIZE
+        while (plaintext.length() % MATRIX_SIZE != 0) {
+            plaintext += 'X'; // Pad with 'X'
+        }
+
+        // Convert plaintext to uppercase and split it into blocks of MATRIX_SIZE characters
+        plaintext = plaintext.toUpperCase();
+        for (int i = 0; i < plaintext.length(); i += MATRIX_SIZE) {
+            String block = plaintext.substring(i, i + MATRIX_SIZE);
+
+            // Multiply the block of plaintext with the key matrix
+            int[] blockVector = new int[MATRIX_SIZE];
+            for (int j = 0; j < MATRIX_SIZE; j++) {
+                int sum = 0;
+                for (int k = 0; k < MATRIX_SIZE; k++) {
+                    sum += (block.charAt(k) - 'A') * keyMatrix[j][k];
+                }
+                blockVector[j] = modulo(sum, 26);
+            }
+
+            // Convert the result back to characters
+            for (int value : blockVector) {
+                encryptedText.append((char) ('A' + value));
+            }
+        }
+
+        return encryptedText.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the key matrix for Hill Cipher (2x2):");
+
+        // Take input for the key matrix
+        keyMatrix = new int[MATRIX_SIZE][MATRIX_SIZE];
+        for (int i = 0; i < MATRIX_SIZE; i++) {
+            for (int j = 0; j < MATRIX_SIZE; j++) {
+                System.out.printf("Enter the value at position (%d, %d): ", i + 1, j + 1);
+                keyMatrix[i][j] = scanner.nextInt();
+
+                // Validate key matrix input
+                if (keyMatrix[i][j] < 0 || keyMatrix[i][j] >= 26) {
+                    System.out.println("Invalid input! The values of the key matrix must be between 0 and 25.");
+                    return;
+                }
+            }
+        }
+
+        // Validate if key matrix is invertible
+        if (!isKeyMatrixInvertible()) {
+            System.out.println("Invalid key matrix! The determinant must be non-zero.");
+            return;
+        }
+
+        scanner.nextLine(); // Consume newline character
+
+        System.out.print("Enter the plaintext to encrypt: ");
+        String plaintext = scanner.nextLine();
+
+        // Validate plaintext input
+        if (!plaintext.matches("[A-Za-z]+")) {
+            System.out.println("Invalid plaintext! Only alphabetic characters are allowed.");
+            return;
+        }
+
+        // Encrypt the plaintext using Hill Cipher
+        String encryptedText = encrypt(plaintext);
+        System.out.println("Encrypted text: " + encryptedText);
+
+        scanner.close();
+    }
+}
