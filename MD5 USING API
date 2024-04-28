@@ -1,0 +1,45 @@
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Scanner;
+
+public class MD5Hashing {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Prompt user for input
+        System.out.println("Enter the string to hash:");
+        String input = scanner.nextLine();
+
+        // Validate input
+        if (input.trim().isEmpty()) {
+            System.out.println("Input cannot be empty.");
+            return;
+        }
+
+        // Compute MD5 hash
+        try {
+            String md5Hash = calculateMD5(input);
+            System.out.println("MD5 Hash: " + md5Hash);
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("MD5 algorithm not available.");
+        }
+    }
+
+    public static String calculateMD5(String input) throws NoSuchAlgorithmException {
+        // Create MessageDigest instance for MD5
+        MessageDigest md = MessageDigest.getInstance("MD5");
+
+        // Add input bytes to digest
+        md.update(input.getBytes());
+
+        // Get the hash's bytes
+        byte[] bytes = md.digest();
+
+        // Convert bytes to hexadecimal format
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+}
