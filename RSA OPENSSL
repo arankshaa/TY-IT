@@ -1,0 +1,52 @@
+administrator@administrator-System-Product-Name:~$ openssl genrsa --out private.pem 1048
+Generating RSA private key, 1048 bit long modulus (2 primes)
+...........................+++++
+............+++++
+e is 65537 (0x010001)
+administrator@administrator-System-Product-Name:~$ ls private.pem
+private.pem
+administrator@administrator-System-Product-Name:~$ cat private.pem
+-----BEGIN RSA PRIVATE KEY-----
+MIICaQIBAAKBhACY1OU6rM0w+qWVDiWitEm0zOlFoAD21JAQIeAFBgvG4BCb0cyR
+j90+ts26n4MsHJOzncZfeOYpmFE8HmcMm3esbeSVYtCUSDRMFcgbR3fhPLWNpzzZ
+cOGoVYMgbLZ7KZC3vcuzPHmRnvu/cRdjtlnmhU10Tf8P7vpAPz1vv9oivGgySwID
+AQABAoGDHgF2e/2fT6V2Svx7ESW6bt/oUL4oUk3Ldw9fjzzvpP0q5ZzcQBvxwTVc
+0O4ub8OwkAxC/U2cSsBX+qixbL09UsI/yq03SZOA949RbKnOxCj+dLIYf+07DwFY
+ktGWuvEGwkpdhPqqy2CVMBhV1HGhiCRhQcKtDRA7v1LIH/U3w4Mg7WkCQgypO+gs
+VjIVA+lIqss2rRurFpFGcoyQfOt8sur6ay0TJvuTFn3VwSHxQ3sYQFsL+QFbCD+t
+Gc+9NTZyICYhcTwfJQJCDBIsPZqvFowjicnGDJ/mytravRUErfF/qo6nHyeJGByo
+e/qpLl4wfKjNp4Aiz7mVFVKYADZCoweniK1WVS/P8sivAkIDhzmZhplylWakoMpv
+nMn6tt+wFjifsTgOi450atppEjg/zQpsgJ+0bL5IVEbC2IBIf2y6CevydyCYDo+k
+8JbUkT0CQgKp2+M4B5xlDc5wnGfavLVUN2HzilXLbQ04bv373k9Yu4Cn3b7if7Zy
+FPb52jSV0aSj1fBuCKQqozgQb3VamHsM9wJCC+BCBjXgJkilIqXtW3nOYpGKv2iC
+z8etpzN7XASFzYQ3viovUGW7F88BZZMOGQZwslyoLmy/35hGurMVk95tNlAx
+-----END RSA PRIVATE KEY-----
+administrator@administrator-System-Product-Name:~$ openssl rsa --in private.pem --out public.pem --outform PEM --pubout
+writing RSA key
+administrator@administrator-System-Product-Name:~$ ls private.pem public.pem
+private.pem  public.pem
+administrator@administrator-System-Product-Name:~$ cat public.pem
+-----BEGIN PUBLIC KEY-----
+MIGiMA0GCSqGSIb3DQEBAQUAA4GQADCBjAKBhACY1OU6rM0w+qWVDiWitEm0zOlF
+oAD21JAQIeAFBgvG4BCb0cyRj90+ts26n4MsHJOzncZfeOYpmFE8HmcMm3esbeSV
+YtCUSDRMFcgbR3fhPLWNpzzZcOGoVYMgbLZ7KZC3vcuzPHmRnvu/cRdjtlnmhU10
+Tf8P7vpAPz1vv9oivGgySwIDAQAB
+-----END PUBLIC KEY-----
+administrator@administrator-System-Product-Name:~$ echo "Hi. My name is Aranksha" >> msg.txt
+administrator@administrator-System-Product-Name:~$ cat msg.txt
+Hi. My name is Aranksha
+administrator@administrator-System-Product-Name:~$ openssl pkeyutl --encrypt --inkey public.pem --pubin --in msg.txt --out enmsg.enc
+administrator@administrator-System-Product-Name:~$ ls enmsg.enc msg.txt private.pem public.pem
+enmsg.enc  msg.txt  private.pem  public.pem
+administrator@administrator-System-Product-Name:~$ cat enmsg.enc
+� ��O��z���jWO}�ۛ"�$<Jk����]ؤ�g�� ��`Y��,5dI9 $�Ad7�8 A <�0x#�� A���sD�� l1��ÇrT`��G�_��APj��w/- %&�� �E�%r�9�i"�����administrator@administrator-System-Product-Name:~$
+administrator@administrator-System-Product-Name:~$ ls enmsg.enc msg.txt private.pem public.pem
+enmsg.enc  msg.txt  private.pem  public.pem
+administrator@administrator-System-Product-Name:~$ rm msg.txt
+administrator@administrator-System-Product-Name:~$ ls enmsg.enc private.pem public.pem
+enmsg.enc  private.pem  public.pem
+administrator@administrator-System-Product-Name:~$ openssl pkeyutl --decrypt --inkey private.pem --in enmsg.enc --out message.txt
+administrator@administrator-System-Product-Name:~$ ls enmsg.enc message.txt private.pem public.pem
+enmsg.enc  message.txt  private.pem  public.pem
+administrator@administrator-System-Product-Name:~$ cat message.txt
+Hi. My name is Aranksha
