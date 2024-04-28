@@ -1,0 +1,76 @@
+import java.util.Scanner;
+
+public class RailFenceCipher {
+
+    // Function to validate the key (must be a positive integer)
+    private static boolean isValidKey(int key) {
+        return key > 0;
+    }
+
+    // Function to encrypt the plaintext using the Rail Fence Cipher
+    private static String encrypt(String plaintext, int key) {
+        StringBuilder encryptedText = new StringBuilder();
+
+        if (plaintext.isEmpty()) {
+            System.out.println("Plaintext cannot be empty.");
+            return "";
+        }
+
+        if (!isValidKey(key)) {
+            System.out.println("Invalid key! The key must be a positive integer.");
+            return "";
+        }
+
+        StringBuilder[] rails = new StringBuilder[key];
+        for (int i = 0; i < key; i++) {
+            rails[i] = new StringBuilder();
+        }
+
+        int railIndex = 0;
+        boolean down = true;
+
+        for (int i = 0; i < plaintext.length(); i++) {
+            rails[railIndex].append(plaintext.charAt(i));
+
+            if (down) {
+                railIndex++;
+                if (railIndex == key - 1) {
+                    down = false;
+                }
+            } else {
+                railIndex--;
+                if (railIndex == 0) {
+                    down = true;
+                }
+            }
+        }
+
+        for (StringBuilder rail : rails) {
+            encryptedText.append(rail);
+        }
+
+        return encryptedText.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the plaintext to encrypt: ");
+        String plaintext = scanner.nextLine();
+
+        System.out.print("Enter the key (number of rails) for Rail Fence Cipher: ");
+        int key;
+        try {
+            key = Integer.parseInt(scanner.nextLine());
+
+            String encryptedText = encrypt(plaintext, key);
+            if (!encryptedText.isEmpty()) {
+                System.out.println("Encrypted text: " + encryptedText);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid key! Please enter a valid integer.");
+        }
+
+        scanner.close();
+    }
+}
