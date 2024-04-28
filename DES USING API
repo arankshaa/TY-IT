@@ -1,0 +1,52 @@
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Scanner;
+
+public class DESAlgorithm {
+
+    public static void main(String[] args) {
+        try {
+            // Get plaintext message and encryption key from user
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter the plaintext message:");
+            String plainText = scanner.nextLine();
+            System.out.println("Enter the encryption key (8 bytes):");
+            String encryptionKey = scanner.nextLine();
+
+            // Validate encryption key length
+            if (encryptionKey.length() != 8) {
+                System.err.println("Encryption key must be exactly 8 bytes in length.");
+                return;
+            }
+
+            // Generate DES key from user input
+            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
+            SecretKey secretKey = keyFactory.generateSecret(new DESKeySpec(encryptionKey.getBytes()));
+
+            // Create DES cipher instance
+            Cipher cipher = Cipher.getInstance("DES");
+
+            // Encryption
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            byte[] encryptedBytes = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
+
+            // Encode encrypted bytes to Base64 for easier display
+            String encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
+            System.out.println("Encrypted text: " + encryptedText);
+
+            // Decryption
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
+
+            // Display decrypted plaintext
+            String decryptedText = new String(decryptedBytes, StandardCharsets.UTF_8);
+            System.out.println("Decrypted text: " + decryptedText);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
