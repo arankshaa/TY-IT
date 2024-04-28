@@ -1,0 +1,36 @@
+PS C:\Users\HP> echo "hi my name is aranksha">>a.txt
+PS C:\Users\HP> cat a.txt
+hi my name is aranksha
+PS C:\Users\HP> openssl enc -nosalt -aes-256-cbc -k aranksha-aes -p
+*** WARNING : deprecated key derivation used.
+Using -iter or -pbkdf2 would be better.
+key=C7559B7E2543A1620AA9D05F2096908550A4C29DC7740986890189C4386D8AC3
+iv =5F093742B44732571B7A0BAC5C88CFF4
+F) æZW╚T÷*#◄►=╘3
+PS C:\Users\HP> ls a.txt
+
+    Directory: C:\Users\HP
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          19-04-2024    00:12             24 a.txt
+
+PS C:\Users\HP> openssl enc -nosalt -aes-256-cbc -in a.txt -out b.txt -base64 -K C7559B7E2543A1620AA9D05F2096908550A4C29DC7740986890189C4386D8AC3 -iv 5F093742B44732571B7A0BAC5C88CFF4
+PS C:\Users\HP> ls a.txt b.txt
+
+    Directory: C:\Users\HP
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          19-04-2024    00:12             24 a.txt
+
+PS C:\Users\HP> rm a.txt
+PS C:\Users\HP> cat b.txt
+cOYhU3h+y+sq4ULd5rmRdR6Yj/waUtxy6dwcAHkm+co=
+PS C:\Users\HP> openssl enc -nosalt -aes-256-cbc -d -in b.txt -out aranksha.txt -base64 -K C7559B7E2543A1620AA9D05F2096908550A4C29DC7740986890189C4386D8AC3 -iv 5F093742B44732571B7A0BAC5C88CFF4
+PS C:\Users\HP> cat aranksha.txt
+hi my name is aranksha
+PS C:\Users\HP>
+
+
+
