@@ -1,0 +1,98 @@
+import java.math.BigInteger;
+import java.util.Scanner;
+
+public class DiffieHellman {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Input n
+        System.out.print("Enter a prime number (n): ");
+        BigInteger n = getPrimeNumber(scanner);
+
+        // Input g
+        System.out.print("Enter a primitive root modulo n (g): ");
+        BigInteger g = getPrimitiveRoot(scanner, n);
+
+        // Input private keys for Alice and Bob
+        System.out.print("Enter Alice's private key (a): ");
+        BigInteger a = getPrivateKey(scanner);
+
+        System.out.print("Enter Bob's private key (b): ");
+        BigInteger b = getPrivateKey(scanner);
+
+        // Calculate public keys for Alice and Bob
+        BigInteger A = g.modPow(a, n);
+        BigInteger B = g.modPow(b, n);
+
+        // Calculate shared secret key for Alice and Bob
+        BigInteger secretKeyA = B.modPow(a, n);
+        BigInteger secretKeyB = A.modPow(b, n);
+
+        // Ensure the shared secret keys match
+        if (secretKeyA.equals(secretKeyB)) {
+            System.out.println("Shared secret key: " + secretKeyA);
+        } else {
+            System.out.println("Error: Shared secret keys do not match!");
+        }
+
+        scanner.close();
+    }
+
+    // Function to get a prime number from user input
+    private static BigInteger getPrimeNumber(Scanner scanner) {
+        BigInteger prime = BigInteger.ZERO;
+        while (true) {
+            String input = scanner.nextLine();
+            try {
+                prime = new BigInteger(input);
+                if (prime.isProbablePrime(1)) {
+                    break;
+                } else {
+                    System.out.print("Please enter a prime number: ");
+                }
+            } catch (NumberFormatException e) {
+                System.out.print("Invalid input. Please enter a valid number: ");
+            }
+        }
+        return prime;
+    }
+
+    // Function to get a primitive root modulo n from user input
+    private static BigInteger getPrimitiveRoot(Scanner scanner, BigInteger n) {
+        BigInteger g = BigInteger.ZERO;
+        while (true) {
+            String input = scanner.nextLine();
+            try {
+                g = new BigInteger(input);
+                if (g.compareTo(BigInteger.ONE) > 0 && g.compareTo(n) < 0 && g.gcd(n).equals(BigInteger.ONE)) {
+                    break;
+                } else {
+                    System.out.print("Please enter a primitive root modulo n: ");
+                }
+            } catch (NumberFormatException e) {
+                System.out.print("Invalid input. Please enter a valid number: ");
+            }
+        }
+        return g;
+    }
+
+    // Function to get a private key from user input
+    private static BigInteger getPrivateKey(Scanner scanner) {
+        BigInteger privateKey = BigInteger.ZERO;
+        while (true) {
+            String input = scanner.nextLine();
+            try {
+                privateKey = new BigInteger(input);
+                if (privateKey.compareTo(BigInteger.ONE) > 0) {
+                    break;
+                } else {
+                    System.out.print("Please enter a private key greater than 1: ");
+                }
+            } catch (NumberFormatException e) {
+                System.out.print("Invalid input. Please enter a valid number: ");
+            }
+        }
+        return privateKey;
+    }
+}
