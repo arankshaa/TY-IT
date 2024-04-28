@@ -1,0 +1,70 @@
+import java.util.Scanner;
+
+public class VigenereCipher {
+
+    // Function to validate the key (must contain only alphabetic characters)
+    private static boolean isValidKey(String key) {
+        return key.matches("[a-zA-Z]+");
+    }
+
+    // Function to encrypt the plaintext using the Vigenère Cipher
+    private static String encrypt(String plaintext, String key) {
+        StringBuilder encryptedText = new StringBuilder();
+
+        plaintext = plaintext.toUpperCase(); // Convert plaintext to uppercase
+        key = key.toUpperCase(); // Convert key to uppercase
+
+        int keyIndex = 0; // Index to iterate over the key
+
+        for (int i = 0; i < plaintext.length(); i++) {
+            char plainChar = plaintext.charAt(i);
+            char keyChar = key.charAt(keyIndex % key.length());
+
+            if (Character.isUpperCase(plainChar)) {
+                int encryptedChar = ((plainChar - 'A') + (keyChar - 'A')) % 26 + 'A';
+                encryptedText.append((char) encryptedChar);
+            } else if (Character.isLowerCase(plainChar)) {
+                int encryptedChar = ((plainChar - 'a') + (keyChar - 'A')) % 26 + 'a';
+                encryptedText.append((char) encryptedChar);
+            } else {
+                // If the character is not alphabetic, keep it unchanged
+                encryptedText.append(plainChar);
+                continue;
+            }
+
+            keyIndex++; // Move to the next character in the key
+        }
+
+        return encryptedText.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Input plaintext
+        System.out.print("Enter the plaintext to encrypt: ");
+        String plaintext = scanner.nextLine();
+
+        // Validate plaintext input
+        if (!plaintext.matches("[a-zA-Z]+")) {
+            System.out.println("Invalid plaintext! Only alphabetic characters are allowed.");
+            return;
+        }
+
+        // Input key
+        System.out.print("Enter the key for Vigenère Cipher: ");
+        String key = scanner.nextLine();
+
+        // Validate key input
+        if (!isValidKey(key)) {
+            System.out.println("Invalid key! Only alphabetic characters are allowed.");
+            return;
+        }
+
+        // Encrypt the plaintext using the Vigenère Cipher
+        String encryptedText = encrypt(plaintext, key);
+        System.out.println("Encrypted text: " + encryptedText);
+
+        scanner.close();
+    }
+}
