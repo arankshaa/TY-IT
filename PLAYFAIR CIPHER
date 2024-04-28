@@ -1,0 +1,108 @@
+import java.util.Scanner;
+
+public class PlayfairCipher {
+
+    private static final int MATRIX_SIZE = 5;
+    private static char[][] matrix;
+
+    // Generate Playfair Cipher matrix
+    private static void generateMatrix(String key) {
+        key = key.toUpperCase().replaceAll("[^A-Z]", ""); // Remove non-alphabetic characters
+        key = key.replace("J", "I"); // Replace J with I
+        boolean[] visited = new boolean[26];
+        int row = 0, col = 0;
+
+        matrix = new char[MATRIX_SIZE][MATRIX_SIZE];
+
+        for (char ch : key.toCharArray()) {
+            if (!visited[ch - 'A']) {
+                matrix[row][col] = ch;
+                visited[ch - 'A'] = true;
+                col++;
+                if (col == MATRIX_SIZE) {
+                    col = 0;
+                    row++;
+                }
+            }
+        }
+
+        for (char ch = 'A'; ch <= 'Z'; ch++) {
+            if (ch != 'J' && !visited[ch - 'A']) {
+                matrix[row][col] = ch;
+                col++;
+                if (col == MATRIX_SIZE) {
+                    col = 0;
+                    row++;
+                }
+            }
+        }
+    }
+
+    // Encrypt plaintext
+    private static String encrypt(String plaintext) {
+        plaintext = plaintext.toUpperCase().replaceAll("[^A-Z]", ""); // Remove non-alphabetic characters
+        plaintext = plaintext.replace("J", "I"); // Replace J with I
+        StringBuilder encryptedText = new StringBuilder();
+
+        for (int i = 0; i < plaintext.length(); i += 2) {
+            char ch1 = plaintext.charAt(i);
+            char ch2 = (i + 1 < plaintext.length()) ? plaintext.charAt(i + 1) : 'X';
+
+            int row1 = -1, col1 = -1, row2 = -1, col2 = -1;
+
+            // Find positions of characters in matrix
+            for (int row = 0; row < MATRIX_SIZE; row++) {
+                for (int col = 0; col < MATRIX_SIZE; col++) {
+                    if (matrix[row][col] == ch1) {
+                        row1 = row;
+                        col1 = col;
+                    } else if (matrix[row][col] == ch2) {
+                        row2 = row;
+                        col2 = col;
+                    }
+                }
+            }
+
+            if (row1 == row2) { // Same row
+                encryptedText.append(matrix[row1][(col1 + 1) % MATRIX_SIZE]);
+                encryptedText.append(matrix[row2][(col2 + 1) % MATRIX_SIZE]);
+            } else if (col1 == col2) { // Same column
+                encryptedText.append(matrix[(row1 + 1) % MATRIX_SIZE][col1]);
+                encryptedText.append(matrix[(row2 + 1) % MATRIX_SIZE][col2]);
+            } else { // Rectangle
+                encryptedText.append(matrix[row1][col2]);
+                encryptedText.append(matrix[row2][col1]);
+            }
+        }
+
+        return encryptedText.toString();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the key for Playfair Cipher: ");
+        String key = scanner.nextLine();
+        
+        // Validate key
+        if (!key.matches("[A-Za-z]+")) {
+            System.out.println("Invalid key! Only alphabetic characters are allowed.");
+            return;
+        }
+
+        System.out.print("Enter the plaintext to encrypt: ");
+        String plaintext = scanner.nextLine();
+
+        // Validate plaintext
+        if (!plaintext.matches("[A-Za-z]+")) {
+            System.out.println("Invalid plaintext! Only alphabetic characters are allowed.");
+            return;
+        }
+
+        generateMatrix(key);
+
+        String encryptedText = encrypt(plaintext);
+        System.out.println("Encrypted text: " + encryptedText);
+
+        scanner.close();
+    }
+}
