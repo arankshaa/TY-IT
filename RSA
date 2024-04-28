@@ -1,0 +1,65 @@
+import java.math.BigInteger;
+import java.util.Scanner;
+
+public class RSAExample {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Input p
+        System.out.print("Enter a prime number (p): ");
+        BigInteger p = getPrimeNumber(scanner);
+
+        // Input q
+        System.out.print("Enter another prime number (q): ");
+        BigInteger q = getPrimeNumber(scanner);
+
+        // Input message
+        System.out.print("Enter the message to encrypt: ");
+        String message = scanner.nextLine();
+
+        // Calculate n
+        BigInteger n = p.multiply(q);
+
+        // Calculate totient of n
+        BigInteger totient = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+
+        // Choose public key e such that 1 < e < totient and gcd(e, totient) = 1
+        BigInteger e = BigInteger.valueOf(65537); // Commonly used value for e
+        while (e.compareTo(totient) < 0 && !e.gcd(totient).equals(BigInteger.ONE)) {
+            e = e.add(BigInteger.ONE);
+        }
+
+        // Calculate private key d using modular inverse of e mod totient
+        BigInteger d = e.modInverse(totient);
+
+        // Encrypt the message
+        BigInteger encryptedMessage = new BigInteger(message.getBytes()).modPow(e, n);
+        System.out.println("Encrypted message: " + encryptedMessage);
+
+        // Decrypt the message
+        BigInteger decryptedMessage = encryptedMessage.modPow(d, n);
+        System.out.println("Decrypted message: " + new String(decryptedMessage.toByteArray()));
+
+        scanner.close();
+    }
+
+    // Function to get a prime number from user input
+    private static BigInteger getPrimeNumber(Scanner scanner) {
+        BigInteger prime = BigInteger.ZERO;
+        while (true) {
+            String input = scanner.nextLine();
+            try {
+                prime = new BigInteger(input);
+                if (prime.isProbablePrime(1)) {
+                    break;
+                } else {
+                    System.out.print("Please enter a prime number: ");
+                }
+            } catch (NumberFormatException e) {
+                System.out.print("Invalid input. Please enter a valid number: ");
+            }
+        }
+        return prime;
+    }
+}
