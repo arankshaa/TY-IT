@@ -1,0 +1,13 @@
+PS C:\Users\HP> openssl md5 hi.txt
+MD5(hi.txt)= 621506ecbd9e81ad14245897c8ddf88c
+PS C:\Users\HP> openssl sha1 hi.txt
+SHA1(hi.txt)= 2e082caf9a98236c55f92922f4ac717f48a553de
+PS C:\Users\HP> openssl sha256 hi.txt
+SHA256(hi.txt)= 6ce39cdb1ef756fc4127c6a76aba2ed1a5b8205aa4533b2059fd832ad283e653
+PS C:\Users\HP>
+
+
+
+
+
+
