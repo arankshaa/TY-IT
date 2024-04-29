@@ -1,0 +1,55 @@
+package logic;
+import javax.crypto.*;
+import java.util.*;
+import java.security.*;
+import javax.crypto.spec.*;
+
+public class AES {
+
+public static void main(String[] args) {
+       try {
+      Scanner sc = new Scanner(System.in);
+      System.out.println("Enter message: ");
+      String msg = sc.nextLine();
+     
+      System.out.println("Enter the encryption key (16 characters): ");
+      String key = sc.nextLine();
+     
+      System.out.println("Enter cipher encryption modes(ECB, CBC, CFB): ");
+      String mode = sc.nextLine().toUpperCase();
+     
+      //to check if the mode entered is correct
+      if(!mode.equals("ECB") && !mode.equals("CBC") && !mode.equals("CFB")) {
+      System.out.println("Cipher mode entered is incorrect...");
+      return;
+      }
+     
+      byte[] encryptionKeyBytes = key.getBytes("UTF-8");
+      SecretKeySpec secretKey = new SecretKeySpec(encryptionKeyBytes,"AES");
+     
+      Cipher cipher = Cipher.getInstance("AES/" + mode + "/PKCS5Padding");
+     
+      //initialization vector
+      byte[] ivBytes = null;
+      if(mode.equals("CBC") || mode.equals("CFB")){
+      System.out.println("Enter initialization vector (16 characters): ");
+      String iv = sc.nextLine();
+      ivBytes = iv.getBytes("UTF-8");
+      }
+     
+      //encryption
+      cipher.init(cipher.ENCRYPT_MODE, secretKey, mode.equals("CBC") || mode.equals("CFB") ? new IvParameterSpec(ivBytes):null);
+      byte[] encryptedBytes = cipher.doFinal(msg.getBytes("UTF-8"));
+      String encryptedMsg = Base64.getEncoder().encodeToString(encryptedBytes);
+      System.out.println("CipherText = "+encryptedMsg);
+     
+      //decryption
+      cipher.init(cipher.DECRYPT_MODE, secretKey, mode.equals("CBC") || mode.equals("CFB") ? new IvParameterSpec(ivBytes):null);
+      byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedMsg));
+      String decryptedMsg = new String(decryptedBytes);
+      System.out.println("Plaintext = "+decryptedMsg);
+       }catch(Exception e) {
+      e.printStackTrace();
+       }
+    }
+}
